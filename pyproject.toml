@@ -1,0 +1,71 @@
+[project]
+name = "demo-os"
+version = "1.0.0"
+requires-python = ">=3.12,<4"
+readme = "README.md"
+license = { file = "LICENSE" }
+authors = [{ name = "Agno", email = "hello@agno.com" }]
+
+dependencies = [
+  "agno[os]",
+  "anthropic",
+  "arxiv",
+  "claude-agent-sdk",
+  "ddgs",
+  "dspy",
+  "elevenlabs",
+  "exa-py",
+  "fal-client",
+  "lumaai",
+  "google-api-python-client",
+  "google-auth-oauthlib",
+  "google-genai>=1.52.0",
+  "langchain-openai",
+  "langgraph",
+  "mcp",
+  "openai",
+  "pandas",
+  "parallel-web",
+  "pgvector",
+  "pillow",
+  "psycopg[binary]",
+  "PyGithub",
+  "pypdf",
+  "reportlab",
+  "slack-sdk",
+  "sqlalchemy",
+  "wikipedia",
+  "yfinance",
+  "youtube-transcript-api",
+]
+
+[project.optional-dependencies]
+dev = ["mypy", "python-dotenv", "ruff"]
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["agents*", "db*", "app*", "frameworks*", "teams*", "workflows*", "evals*", "utils*", "scripts*"]
+
+[tool.ruff]
+line-length = 120
+exclude = [".venv*"]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401", "F403"]
+
+[tool.mypy]
+check_untyped_defs = true
+no_implicit_optional = true
+warn_unused_configs = true
+plugins = ["pydantic.mypy"]
+exclude = [".venv*"]
+
+[[tool.mypy.overrides]]
+module = ["pgvector.*", "agno.*", "httpx.*", "mcp.*", "pandas.*", "openai.*", "yaml.*", "parallel.*", "sqlalchemy.*", "dspy.*"]
+ignore_missing_imports = true
+
+[tool.uv.pip]
+no-annotate = true

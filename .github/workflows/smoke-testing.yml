@@ -1,0 +1,137 @@
+name: Smoke Testing
+
+on:
+  workflow_dispatch:
+    inputs:
+      group:
+        description: "Smoke test group (agents, teams, workflows, security, graceful, hitl). Leave empty for all."
+        required: false
+        default: "agents"
+  # Weekly run — Saturday afternoon at 08:30 UTC
+  schedule:
+    - cron: "30 8 * * 6"
+  pull_request:
+    types: [labeled, synchronize]
+    branches: ["main"]
+
+concurrency:
+  group: smoke-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: true
+
+env:
+  UV_SYSTEM_PYTHON: 1
+  PYTHONPATH: ${{ github.workspace }}
+
+jobs:
+  smoke-testing:
+    if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-smoke')
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    services:
+      postgres:
+        image: agnohq/pgvector:16
+        env:
+          POSTGRES_USER: ai
+          POSTGRES_PASSWORD: ai
+          POSTGRES_DB: ai
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U ai"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=10
+
+    env:
+      DB_HOST: localhost
+      DB_PORT: 5432
+      DB_USER: ai
+      DB_PASS: ai
+      DB_DATABASE: ai
+      RUNTIME_ENV: dev
+      AGNO_DEBUG: "True"
+      AGENTOS_URL: http://127.0.0.1:8000
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      EXA_API_KEY: ${{ secrets.EXA_API_KEY }}
+      PARALLEL_API_KEY: ${{ secrets.PARALLEL_API_KEY }}
+      ELEVEN_LABS_API_KEY: ${{ secrets.ELEVEN_LABS_API_KEY }}
+      FAL_KEY: ${{ secrets.FAL_KEY }}
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+          cache-dependency-glob: "pyproject.toml"
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install project
+        run: uv sync --extra dev
+
+      - name: Seed Dash SQL tables
+        run: uv run python -m agents.dash.scripts.load_data --drop
+
+      - name: Populate Dash knowledge base
+        run: uv run python -m agents.dash.scripts.load_knowledge --recreate
+
+      - name: Start AgentOS server
+        run: |
+          uv run uvicorn app.main:app --host 0.0.0.0 --port 8000 > server.log 2>&1 &
+          echo $! > server.pid
+
+      - name: Wait for server to be ready
+        run: |
+          for i in $(seq 1 60); do
+            if curl -fs http://localhost:8000 > /dev/null; then
+              echo "Server is up"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "::error::Server failed to start within 120s"
+          tail -100 server.log
+          exit 1
+
+      - name: Run smoke tests
+        id: smoke
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            GROUP="${{ github.event.inputs.group }}"
+            if [ -n "$GROUP" ]; then
+              uv run python -m evals smoke --group "$GROUP" --output
+            else
+              uv run python -m evals smoke --output
+            fi
+          else
+            uv run python -m evals smoke --output
+          fi
+
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smoke-results
+          path: evals/.results/
+          if-no-files-found: warn
+
+      - name: Upload server log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: server-log
+          path: server.log
+
+      - name: Stop server
+        if: always()
+        run: |
+          if [ -f server.pid ]; then
+            kill $(cat server.pid) || true
+          fi

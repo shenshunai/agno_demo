@@ -1,0 +1,65 @@
+services:
+  demo-os-db:
+    image: agnohq/pgvector:16
+    container_name: demo-os-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:-ai}
+      POSTGRES_PASSWORD: ${DB_PASS:-ai}
+      POSTGRES_DB: ${DB_DATABASE:-ai}
+    volumes:
+      - pgdata:/var/lib/postgresql
+    ports:
+      - "5432:5432"
+    networks:
+      - demo-os
+
+  demo-os-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ${IMAGE_NAME:-demo-os}:${IMAGE_TAG:-latest}
+    container_name: demo-os-api
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      # Hot-reload: mount source code
+      - .:/app
+    environment:
+      - RUNTIME_ENV=dev
+      - AGNO_DEBUG=True
+      - PYTHONPATH=/app
+      - AGENTOS_URL=http://127.0.0.1:8000
+      # Database
+      - DB_HOST=demo-os-db
+      - DB_PORT=5432
+      - DB_USER=${DB_USER:-ai}
+      - DB_PASS=${DB_PASS:-ai}
+      - DB_DATABASE=${DB_DATABASE:-ai}
+      - WAIT_FOR_DB=True
+      - PRINT_ENV_ON_LOAD=${PRINT_ENV_ON_LOAD:-False}
+      # API keys
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - EXA_API_KEY=${EXA_API_KEY:-}
+      - PARALLEL_API_KEY=${PARALLEL_API_KEY:-}
+      - ELEVEN_LABS_API_KEY=${ELEVEN_LABS_API_KEY:-}
+      - FAL_KEY=${FAL_KEY:-}
+      - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY:-}
+      # Slack (optional)
+      - SLACK_TOKEN=${SLACK_TOKEN:-}
+      - SLACK_SIGNING_SECRET=${SLACK_SIGNING_SECRET:-}
+    depends_on:
+      - demo-os-db
+    networks:
+      - demo-os
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+networks:
+  demo-os:
+
+volumes:
+  pgdata:
