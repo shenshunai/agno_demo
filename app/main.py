@@ -42,7 +42,8 @@ from agents.reporter import reporter
 from agents.scheduler import scheduler
 from agents.studio import studio
 from agents.taskboard import taskboard
-from agents.chatrobot import shenshunai
+from agents.ssa.chatrobot import shenshunai
+from agents.ssa.trainticketagent import trainticketagent
 
 from app.registry import registry
 from app.settings import RUNTIME_ENV, SCHEDULER_BASE_URL, SLACK_SIGNING_SECRET, SLACK_TOKEN, agent_db
@@ -126,6 +127,7 @@ agent_os = AgentOS(
         injector,
         craftsman,
         shenshunai,
+        trainticketagent,
         claude_repo,  # type: ignore[list-item]
         langgraph_debate,  # type: ignore[list-item]
         dspy_math,  # type: ignore[list-item]

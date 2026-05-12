@@ -10,7 +10,7 @@ from os import getenv
 from agno.agent import Agent
 from agno.models.deepseek import DeepSeek
 
-from agents.chatrobot.instructions import INSTRUCTIONS
+from .instructions import INSTRUCTIONS
 from app.settings import agent_db
 
 # ---------------------------------------------------------------------------
