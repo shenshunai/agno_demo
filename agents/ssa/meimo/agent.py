@@ -1,8 +1,8 @@
 """
-Chatrobot（申顺爱）— 中文闲聊 Agent
-=================================
+Meimo（魅魔）— SSA 中文闲聊 Agent
+==============================
 
-使用 DeepSeek 作为对话模型；与全局 `DEEPSEEK_MODEL_ID` 环境变量对齐。
+对话模型 DeepSeek；与全局 ``DEEPSEEK_MODEL_ID`` 环境变量一致。
 """
 
 from os import getenv
@@ -14,11 +14,12 @@ from .instructions import INSTRUCTIONS
 from app.settings import agent_db
 
 # ---------------------------------------------------------------------------
-# Create Agent
+# 创建 Agent
 # ---------------------------------------------------------------------------
-shenshunai = Agent(
-    id="shenshunai",
-    name="申顺爱robot",
+# 稳定 ``id`` 供 AgentOS 路由；``name`` 为界面展示标签。
+meimo = Agent(
+    id="meimo",
+    name="魅魔",
     model=DeepSeek(id=getenv("DEEPSEEK_MODEL_ID", "deepseek-chat")),
     db=agent_db,
     instructions=INSTRUCTIONS,

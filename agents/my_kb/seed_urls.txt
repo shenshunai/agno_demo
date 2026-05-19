@@ -1,0 +1,4 @@
+# Copy this file to seed_urls.txt and add one URL per line.
+# Lines starting with # are ignored.
+
+# https://example.com/documentation/getting-started.html

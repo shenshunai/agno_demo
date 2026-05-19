@@ -13,12 +13,23 @@ from agno.db.postgres import PostgresDb
 from agno.knowledge import Knowledge
 from agno.knowledge.embedder.base import Embedder
 from agno.knowledge.embedder.openai import OpenAIEmbedder
-from agno.knowledge.embedder.openai_like import OpenAILikeEmbedder
 from agno.vectordb.pgvector import PgVector, SearchType
 
 from db.url import db_url
 
 DB_ID = "demo-os-db"
+
+
+def resolve_embedding_provider() -> str:
+    """Resolve which embedding backend to use (shared by create_knowledge and load_knowledge)."""
+    raw_key = getenv("EMBEDDING_PROVIDER")
+    raw = (raw_key or "").strip().lower()
+    if raw:
+        return raw
+    use_ds = getenv("USE_DEEPSEEK", "").strip().lower() in ("1", "true", "yes")
+    if use_ds and getenv("DEEPSEEK_API_KEY", "").strip() and not getenv("OPENAI_API_KEY", "").strip():
+        return "deepseek"
+    return "openai"
 
 
 def get_postgres_db(knowledge_table: str | None = None) -> PostgresDb:
@@ -38,22 +49,39 @@ def get_postgres_db(knowledge_table: str | None = None) -> PostgresDb:
 def _build_embedder() -> Embedder:
     """根据环境变量创建向量嵌入器（Embedder）。
 
-    规则很简单：
-    - 默认使用 OpenAI 嵌入（兼容旧配置）
-    - 当 EMBEDDING_PROVIDER=deepseek 时，改用 DeepSeek 兼容的嵌入接口
+    - openai：OpenAIEmbedder（默认）。
+    - deepseek：官方无可用 /v1/embeddings，改用 DeepSeek **对话模型**通过 chat 生成向量
+      （仅 DEEPSEEK_API_KEY；见 ``DeepSeekChatEmbedder``，成本与延迟高于专用嵌入）。
     """
-    provider = getenv("EMBEDDING_PROVIDER", "openai").strip().lower()
-
+    provider = resolve_embedding_provider()
     if provider == "deepseek":
-        return OpenAILikeEmbedder(
-            id=getenv("DEEPSEEK_EMBEDDING_MODEL", "deepseek-embedding"),
+        from db.deepseek_chat_embedder import DeepSeekChatEmbedder
+
+        base = getenv("DEEPSEEK_BASE_URL", "https://api.deepseek.com/v1").strip().rstrip("/")
+        if base == "https://api.deepseek.com":
+            base = "https://api.deepseek.com/v1"
+        chat_model = getenv(
+            "DEEPSEEK_EMBEDDING_MODEL",
+            getenv("DEEPSEEK_MODEL_ID", "deepseek-v4-flash"),
+        ).strip()
+        if not chat_model:
+            chat_model = "deepseek-v4-flash"
+        dimensions = int(getenv("DEEPSEEK_EMBEDDING_DIMENSIONS", "256"))
+        return DeepSeekChatEmbedder(
+            dimensions=dimensions,
+            chat_model=chat_model,
             api_key=getenv("DEEPSEEK_API_KEY", "").strip() or None,
-            base_url=getenv("DEEPSEEK_BASE_URL", "https://api.deepseek.com/v1"),
-            dimensions=int(getenv("DEEPSEEK_EMBEDDING_DIMENSIONS", "1536")),
+            base_url=base,
+        )
+
+    if provider != "openai":
+        raise ValueError(
+            f"Unsupported EMBEDDING_PROVIDER={provider!r}. Use 'openai' or 'deepseek' (see db/session.py)."
         )
 
     return OpenAIEmbedder(
         id=getenv("OPENAI_EMBEDDING_MODEL", "text-embedding-3-small"),
+        api_key=getenv("OPENAI_API_KEY", "").strip() or None,
     )
 
 

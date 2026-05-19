@@ -1,0 +1,1 @@
+This is a plain .txt sample for my_kb. Agno uses TextReader for .txt files.

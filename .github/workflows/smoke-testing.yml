@@ -82,6 +82,9 @@ jobs:
       - name: Populate Dash knowledge base
         run: uv run python -m agents.dash.scripts.load_knowledge --recreate
 
+      - name: Populate my_kb knowledge base
+        run: uv run python -m agents.my_kb.scripts.load_knowledge
+
       - name: Start AgentOS server
         run: |
           uv run uvicorn app.main:app --host 0.0.0.0 --port 8000 > server.log 2>&1 &

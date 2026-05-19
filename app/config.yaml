@@ -7,6 +7,11 @@ chat:
       - "Tell me about Learning Machines"
       - "Summarize the key features of Agno"
 
+    my-kb-agent:
+      - "知识库里关于如何加载文档是怎么说的？"
+      - "sample.md 里写了哪些约定？"
+      - "嵌入配置应该看哪个文件？"
+
     mcp:
       - "What is Agno?"
       - "Tell me about Learning Machines"
@@ -71,6 +76,16 @@ chat:
       - "Review this Python function for bugs: def login(user, pwd): return db.query(f'SELECT * FROM users WHERE name={user}')"
       - "Design a REST API for a task management application"
       - "Write a system prompt for a customer support chatbot"
+
+    meimo:
+      - "今天有啥好玩的事跟我聊聊？"
+      - "用最冷的段子讲一个程序员笑话。"
+      - "我有点累，像朋友一样随便说两句就行。"
+
+    jarvis:
+      - "主文档或权威说明通常在哪里查看？我该什么时候自己去打开网页？"
+      - "根据知识库里已有材料，总结出与核心业务说明相关的要点。"
+      - "知识库没有命中时，你会如何引导我补充信息？"
 
     # --- Multi-Framework Agents ---
 

@@ -26,13 +26,19 @@ class Entity:
 
 ENTITIES: dict[str, Entity] = {
     # -------------------------------------------------------------------------
-    # Agents (14)
+    # Agents
     # -------------------------------------------------------------------------
     "docs": Entity(
         id="docs",
         type="agent",
         instruction_file="agents/docs/instructions.py",
         definition_file="agents/docs/agent.py",
+    ),
+    "my-kb-agent": Entity(
+        id="my-kb-agent",
+        type="agent",
+        instruction_file="agents/my_kb/instructions.py",
+        definition_file="agents/my_kb/agent.py",
     ),
     "mcp": Entity(
         id="mcp",
@@ -112,6 +118,12 @@ ENTITIES: dict[str, Entity] = {
         type="agent",
         instruction_file="agents/craftsman/instructions.py",
         definition_file="agents/craftsman/agent.py",
+    ),
+    "jarvis": Entity(
+        id="jarvis",
+        type="agent",
+        instruction_file="agents/ssa/jarvis/instructions.py",
+        definition_file="agents/ssa/jarvis/agent.py",
     ),
     # -------------------------------------------------------------------------
     # Teams (11)

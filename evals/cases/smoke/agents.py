@@ -1,4 +1,4 @@
-"""Smoke test cases for the 14 standalone agents."""
+"""Smoke test cases for standalone agents registered in app/main.py."""
 
 from evals.cases.smoke import SmokeTest
 
@@ -40,6 +40,34 @@ AGENT_TESTS: list[SmokeTest] = [
         response_contains=["Agent", "Agno"],
         response_not_contains=["Traceback"],
         max_duration=90.0,
+    ),
+    # -------------------------------------------------------------------------
+    # My KB (PgVector RAG)
+    # -------------------------------------------------------------------------
+    SmokeTest(
+        id="a.1.4",
+        name="my-kb — intro in Chinese",
+        entity_type="agent",
+        entity_id="my-kb-agent",
+        group="agents",
+        prompt="用一两句话中文自我介绍，说明你是「我的知识库」助手。",
+        response_matches=[r"[\u4e00-\u9fff]"],
+        response_not_contains=["Traceback"],
+        max_duration=45.0,
+    ),
+    SmokeTest(
+        id="a.1.5",
+        name="my-kb — sample.txt TextReader (RAG)",
+        entity_type="agent",
+        entity_id="my-kb-agent",
+        group="agents",
+        prompt=(
+            "According to the knowledge base file sample.txt in this project, "
+            "what does Agno use for .txt files? Reply with the reader class name only."
+        ),
+        response_matches=[r"(?i)textreader"],
+        response_not_contains=["Traceback"],
+        max_duration=60.0,
     ),
     # -------------------------------------------------------------------------
     # MCP (External tools via MCP)

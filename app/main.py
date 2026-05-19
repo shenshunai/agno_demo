@@ -37,13 +37,17 @@ from agents.feedback import feedback
 from agents.helpdesk import helpdesk
 from agents.injector import injector
 from agents.mcp import mcp_agent
+from agents.my_kb import my_kb, my_kb_agent
 from agents.reasoner import reasoner
 from agents.reporter import reporter
 from agents.scheduler import scheduler
 from agents.studio import studio
 from agents.taskboard import taskboard
-from agents.ssa.chatrobot import shenshunai
+from agents.ssa.meimo import meimo
+from agents.ssa.yinyue import yinyue
+from agents.ssa.jarvis import jarvis
 from agents.ssa.trainticketagent import trainticketagent
+from agents.ssa.jarvis.settings import jarvis_kb
 
 from app.registry import registry
 from app.settings import RUNTIME_ENV, SCHEDULER_BASE_URL, SLACK_SIGNING_SECRET, SLACK_TOKEN, agent_db
@@ -113,6 +117,7 @@ agent_os = AgentOS(
     db=agent_db,
     agents=[
         docs_agent,
+        my_kb_agent,
         mcp_agent,
         helpdesk,
         feedback,
@@ -126,8 +131,10 @@ agent_os = AgentOS(
         compressor,
         injector,
         craftsman,
-        shenshunai,
+        yinyue,
+        meimo,
         trainticketagent,
+        jarvis,
         claude_repo,  # type: ignore[list-item]
         langgraph_debate,  # type: ignore[list-item]
         dspy_math,  # type: ignore[list-item]
@@ -155,6 +162,8 @@ agent_os = AgentOS(
         dash_learnings,
         investment_knowledge,
         investment_learnings,
+        my_kb,
+        jarvis_kb,
     ],
     interfaces=interfaces,
     # 共享工具集 / 可选模型（当对应 Key 存在时会展示到 AgentOS UI）。
