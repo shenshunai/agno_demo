@@ -77,15 +77,15 @@ chat:
       - "Design a REST API for a task management application"
       - "Write a system prompt for a customer support chatbot"
 
-    meimo:
-      - "今天有啥好玩的事跟我聊聊？"
-      - "用最冷的段子讲一个程序员笑话。"
-      - "我有点累，像朋友一样随便说两句就行。"
-
     jarvis:
       - "主文档或权威说明通常在哪里查看？我该什么时候自己去打开网页？"
       - "根据知识库里已有材料，总结出与核心业务说明相关的要点。"
       - "知识库没有命中时，你会如何引导我补充信息？"
+
+    tiaojiao-system:
+      - "请根据我的产品场景，写一版系统提示词：角色、目标、禁止项、输出格式。"
+      - "这是我现在的 prompt，请指出歧义和可能被误读的句子，并给一版修订稿。"
+      - "帮我设计 5 条验收用例：正常路径、边界情况、以及应拒答的请求。"
 
     # --- Multi-Framework Agents ---
 

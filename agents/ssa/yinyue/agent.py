@@ -25,6 +25,9 @@ yinyue = Agent(
     db=agent_db,
     instructions=INSTRUCTIONS,
     # Persistent agentic memory across runs (backed by `agent_db`).
+    # 让 Agent 一步步推理处理问题
+    reasoning=True,
+    stream=True,
     enable_agentic_memory=True,
     # Inject current datetime into each run for time-aware replies.
     add_datetime_to_context=True,
