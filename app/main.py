@@ -17,8 +17,6 @@ from pathlib import Path
 from dotenv import load_dotenv
 import yaml
 
-from agents.ssa.meimo import meimo
-
 # 解析仓库根目录（`app/` 的上级目录），避免 IDE 工作目录不正确时无法加载 .env。
 _REPO_ROOT = Path(__file__).resolve().parent.parent
 load_dotenv(_REPO_ROOT / ".env")
@@ -46,10 +44,11 @@ from agents.scheduler import scheduler
 from agents.studio import studio
 from agents.taskboard import taskboard
 from agents.ssa.yinyue import yinyue
+from agents.ssa.meimo import meimo
 from agents.ssa.jarvis import jarvis
 from agents.ssa.trainticketagent import trainticketagent
-from agents.ssa.tiaojiao_system import tiaojiao_system
-from agents.ssa.ruoxi_senpai import ruoxi_senpai
+from agents.ssa.tiaojiao import tiaojiao_system
+from agents.ssa.ruoxi import ruoxi
 from agents.ssa.qianfu import qianfu
 from agents.ssa.jarvis.settings import jarvis_kb
 
@@ -139,7 +138,7 @@ agent_os = AgentOS(
         meimo,
         trainticketagent,
         tiaojiao_system,
-        ruoxi_senpai,
+        ruoxi,
         qianfu,
         jarvis,
         claude_repo,  # type: ignore[list-item]

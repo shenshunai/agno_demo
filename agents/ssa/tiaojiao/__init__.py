@@ -1,5 +1,5 @@
-"""SSA「调教系统」— 提示词与行为迭代顾问。"""
+"""SSA「紫灵」— 中式 R18H 游戏系统。"""
 
-from .agent import tiaojiao_system
+from .agent import ziling
 
-__all__ = ["tiaojiao_system"]
+__all__ = ["ziling"]

@@ -14,8 +14,8 @@ from app.settings import MODEL, agent_db
 # ---------------------------------------------------------------------------
 # 创建 Agent
 # ---------------------------------------------------------------------------
-ruoxi_senpai = Agent(
-    id="ruoxi-senpai",
+ruoxi = Agent(
+    id="ruoxi",
     name="若曦学姐",
     model=MODEL,
     db=agent_db,

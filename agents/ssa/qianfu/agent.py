@@ -13,9 +13,9 @@ from app.settings import MODEL, agent_db
 # ---------------------------------------------------------------------------
 # Create Agent
 # ---------------------------------------------------------------------------
-qianfu = Agent(
-    id="qianfu",
-    name="潜伏",
+qianfu_chitu = Agent(
+    id="qianfu-chitu",
+    name="潜伏之赤途",
     model=MODEL,
     db=agent_db,
     instructions=INSTRUCTIONS,

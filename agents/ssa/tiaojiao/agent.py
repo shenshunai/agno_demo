@@ -13,9 +13,9 @@ from app.settings import MODEL, agent_db
 # ---------------------------------------------------------------------------
 # 创建 Agent
 # ---------------------------------------------------------------------------
-tiaojiao_system = Agent(
-    id="tiaojiao-system",
-    name="调教系统",
+ziling = Agent(
+    id="ziling",
+    name="紫灵",
     model=MODEL,
     db=agent_db,
     instructions=INSTRUCTIONS,
