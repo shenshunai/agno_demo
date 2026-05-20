@@ -47,9 +47,9 @@ from agents.ssa.yinyue import yinyue
 from agents.ssa.meimo import meimo
 from agents.ssa.jarvis import jarvis
 from agents.ssa.trainticketagent import trainticketagent
-from agents.ssa.tiaojiao import tiaojiao_system
+from agents.ssa.tiaojiao import ziling
 from agents.ssa.ruoxi import ruoxi
-from agents.ssa.qianfu import qianfu
+from agents.ssa.qianfu import qianfu_chitu
 from agents.ssa.jarvis.settings import jarvis_kb
 
 from app.registry import registry
@@ -137,9 +137,9 @@ agent_os = AgentOS(
         yinyue,
         meimo,
         trainticketagent,
-        tiaojiao_system,
+        ziling,
         ruoxi,
-        qianfu,
+        qianfu_chitu,
         jarvis,
         claude_repo,  # type: ignore[list-item]
         langgraph_debate,  # type: ignore[list-item]
