@@ -1,1 +1,1 @@
-"""SSA 自定义 Agent 包（yinyue、meimo、trainticketagent、jarvis 等）。"""
+"""SSA 自定义 Agent 包（yinyue、trainticketagent、jarvis、tiaojiao_system、ruoxi_senpai、qianfu 等）。"""
